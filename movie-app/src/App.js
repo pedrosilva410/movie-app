@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './App.css';
-import MovieList from './components/MovieList';
-import MovieListHeading from './components/MovieListHeading';
-import SearchBox from './components/SearchBox';
+import "./App.css";
+import MovieList from "./components/MovieList";
+import MovieListHeading from "./components/MovieListHeading";
+import SearchBox from "./components/SearchBox";
+import AddFavourites from "./components/AddFavourites";
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [favourites, setFavourites] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 
   const getMovieRequest = async (searchValue) => {
@@ -18,11 +20,16 @@ function App() {
     if (responseJson.Search) {
       setMovies(responseJson.Search);
     }
-  }
+  };
 
   useEffect(() => {
     getMovieRequest(searchValue);
   }, [searchValue]);
+
+  const addFavouriteMovie = (movie) => {
+    const newFavouriteList = [...favourites, movie];
+    setFavourites(newFavouriteList);
+  };
 
   return (
     <div className="container-fluid movieApp">
@@ -30,8 +37,25 @@ function App() {
         <MovieListHeading heading="Fake movie posters" />
         <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
+
       <div className="row">
-        <MovieList movies={movies} />
+        <MovieList
+          movies={movies}
+          handleFavouriteClick={addFavouriteMovie}
+          favouriteComponent={AddFavourites}
+        />
+      </div>
+
+      <div className="row d-flex align-items-center mt-4 mb-4">
+        <MovieListHeading heading="Favourite Movies" />
+      </div>
+
+      <div className="row">
+        <MovieList
+          movies={favourites}
+          handleFavouriteClick={addFavouriteMovie}
+          favouriteComponent={AddFavourites}
+        />
       </div>
     </div>
   );
